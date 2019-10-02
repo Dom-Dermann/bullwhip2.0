@@ -76,7 +76,7 @@ def get_balance_sheets(company_short):
 
             # connect to DB if create income statements table, if not exists, then commit data
             conn = db_handler.create_connection("./stock_db.db")
-            db_handler.create_table(conn, dv)
+            db_handler.create_table(conn, db_handler.create_balance_sheets_table_sql)
             for year_index, y in enumerate(historical_bs):
                 data_list = []
                 data_list.append(company_short)
@@ -85,8 +85,9 @@ def get_balance_sheets(company_short):
                 # go through all data that is relevant and append to list to pass to DB
                 
                 # pass to commit to DB
-                # db_handler.insert_income_statement_data(conn, data_list)
-            print("Data committed successfully.")
+                # db_handler.insert_balance_sheet_data(conn, data_list)
+            print("Balance sheet data committed successfully.")
+            db_handler.close_connection(conn)
         except:
             print("That didn't work.")
     else:
