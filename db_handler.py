@@ -170,6 +170,38 @@ create_balance_sheets_table_sql = """ CREATE TABLE IF NOT EXISTS balance_sheets 
 );
 """
 
+insert_balance_sheet_data_sql = """ INSERT OR IGNORE INTO balance_sheets (
+    symbol, 
+    date,
+    cash_and_equivalents, 
+    short_term_investments,
+    receiveables, 
+    inventories,
+    total_current_assets,
+    property_plant_equipment,
+    goodwill_intangible, 
+    long_term_investments,
+    total_non_current_assets,
+    total_assets,
+    payables,
+    short_term_debt, 
+    total_current_liabilities,
+    long_term_debt,
+    total_debt,
+    deffered_revenue,
+    tax_liabilities,
+    deposit_liabilities,
+    total_non_current_liabilities,
+    total_liabilities, 
+    retained_earnings,
+    total_shareholders_equity,
+    investments,
+    net_debt,
+    other_assets, 
+    other_liabilities
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+"""
+
 ### DB methods
 
 def create_connection(db_file):
@@ -207,10 +239,10 @@ def insert_income_statement_data(conn, income_statement):
     conn.commit()
     return cur.lastrowid
 
-def insert_key_ratio_data(con, key_ratios):
-    cur = con.cursor()
-    cur.execute(insert_yahoo_ratios_data, key_ratios)
-    con.commit()
+def insert_balance_sheet_data(conn, balance_sheet):
+    cur = conn.cursor()
+    cur.execute(insert_balance_sheet_data_sql, balance_sheet)
+    conn.commit()
     return cur.lastrowid
 
 ### for testing only
