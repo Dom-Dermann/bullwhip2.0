@@ -1,7 +1,4 @@
-# bullwhip
+# bullwhip 2.0
 A financial analysis tool
 
-Please note: if you wish to use this program be aware that it scrapes some websites. 
-While this does not violate the terms of use, please make sure you do not interfere with their business by being conscious 
-of how many requests you send. 
-Thank you. 
+Please note: this program uses the financialmodelingprep.com API, which is free of charge. I'd like to thank the good folks over there for their hard work!
