@@ -56,12 +56,41 @@ def get_income_statements(company_short):
                 data_list.append(this_year["Net Profit Margin"])
                 # pass to commit to DB
                 db_handler.insert_income_statement_data(conn, data_list)
-            print("Data committed successfully.")
-            return historical_is
+            print("Income statement data committed successfully.")
+            db_handler.close_connection(conn)
+            return True
         except:
             raise Exception("The API call went wrong. No data committed to DB.")
     else:
         raise Exception("Could not retrieve company data from API.")
+
+def get_balance_sheets(company_short):
+    api_url_balance_sheet = f'https://financialmodelingprep.com/api/v3/financials/balance-sheet-statement/{company_short}'
+    response = requests.get(api_url_balance_sheet)
+    if response.status_code == 200:
+        balance_sheet_data = json.loads(response.text)
+        try:
+            historical_bs = balance_sheet_data['financials']
+            print(f'Historical balance sheet data of {company_short} found for the last {len(historical_bs)} years.')
+            print("committing to DB ...")
+
+            # connect to DB if create income statements table, if not exists, then commit data
+            conn = db_handler.create_connection("./stock_db.db")
+            db_handler.create_table(conn, dv)
+            for year_index, y in enumerate(historical_bs):
+                data_list = []
+                data_list.append(company_short)
+                # this year is a JSON object
+                this_year = historical_bs[year_index]
+                # go through all data that is relevant and append to list to pass to DB
+                
+                # pass to commit to DB
+                # db_handler.insert_income_statement_data(conn, data_list)
+            print("Data committed successfully.")
+        except:
+            print("That didn't work.")
+    else:
+        print("Could not retrieve data from API.")
 
 def get_key_metrics(company_short):
     api_url_metrics = f'https://financialmodelingprep.com/api/v3/company-key-metrics/{company_short}'
