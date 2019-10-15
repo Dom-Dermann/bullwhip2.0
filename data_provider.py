@@ -72,7 +72,6 @@ def get_balance_sheets(company_short):
         try:
             historical_bs = balance_sheet_data['financials']
             print(f'Historical balance sheet data of {company_short} found for the last {len(historical_bs)} years.')
-            print("committing to DB ...")
 
             # connect to DB if create income statements table, if not exists, then commit data
             conn = db_handler.create_connection("./stock_db.db")
@@ -83,13 +82,40 @@ def get_balance_sheets(company_short):
                 # this year is a JSON object
                 this_year = historical_bs[year_index]
                 # go through all data that is relevant and append to list to pass to DB
-                
+                data_list.append(y['date'])
+                data_list.append(y['Cash and cash equivalents'])
+                data_list.append(y['Short-term investments'])
+                data_list.append(y['Receivables'])
+                data_list.append(y['Inventories'])
+                data_list.append(y['Total current assets'])
+                data_list.append(y['Property, Plant & Equipment Net'])
+                data_list.append(y['Goodwill and Intangible Assets'])
+                data_list.append(y['Long-term investments'])
+                data_list.append(y['Total non-current assets'])
+                data_list.append(y['Total assets'])
+                data_list.append(y['Payables'])
+                data_list.append(y['Short-term debt'])
+                data_list.append(y['Total current liabilities'])
+                data_list.append(y['Long-term debt'])
+                data_list.append(y['Total debt'])
+                data_list.append(y['Deferred revenue'])
+                data_list.append(y['Tax Liabilities'])
+                data_list.append(y['Deposit Liabilities'])
+                data_list.append(y['Total non-current liabilities'])
+                data_list.append(y['Total liabilities'])
+                data_list.append(y['Retained earnings (deficit)'])
+                data_list.append(y['Total shareholders equity'])
+                data_list.append(y['Investments'])
+                data_list.append(y['Net Debt'])
+                data_list.append(y['Other Assets'])
+                data_list.append(y['Other Liabilities'])
                 # pass to commit to DB
-                # db_handler.insert_balance_sheet_data(conn, data_list)
+                db_handler.insert_balance_sheet_data(conn, data_list)
             print("Balance sheet data committed successfully.")
             db_handler.close_connection(conn)
-        except:
-            print("That didn't work.")
+        except Exception as e:
+            print("That didn't work. Did you enter a correct company symbol?")
+            print(e)
     else:
         print("Could not retrieve data from API.")
 
