@@ -115,7 +115,50 @@ def get_balance_sheets(company_short):
             db_handler.close_connection(conn)
         except Exception as e:
             print("That didn't work. Did you enter a correct company symbol?")
-            print(e)
+            print("Exception: " + str(e))
+    else:
+        print("Could not retrieve data from API.")
+
+def get_cash_flow_statements(company_short):
+    api_url_balance_sheet = f'https://financialmodelingprep.com/api/v3/financials/cash-flow-statement/{company_short}'
+    response = requests.get(api_url_balance_sheet)
+    if response.status_code == 200:
+        cash_flow_data = json.loads(response.text)
+        try:
+            historical_cfs = cash_flow_data['financials']
+            print(f'Historical cash flow data of {company_short} found for the last {len(historical_cfs)} years.')
+
+            # connect to DB if create income statements table, if not exists, then commit data
+            conn = db_handler.create_connection("./stock_db.db")
+            db_handler.create_table(conn, db_handler.create_cash_flow_table_sql)
+            for year_index, y in enumerate(historical_cfs):
+                data_list = []
+                data_list.append(company_short)
+                # this year is a JSON object
+                this_year = historical_cfs[year_index]
+                # go through all data that is relevant and append to list to pass to DB
+                data_list.append(y['date'])
+                data_list.append(y['Depreciation & Amortization'])
+                data_list.append(y['Stock-based compensation'])
+                data_list.append(y['Operating Cash Flow'])
+                data_list.append(y['Capital Expenditure'])
+                data_list.append(y['Acquisitions and disposals'])
+                data_list.append(y['Investment purchases and sales'])
+                data_list.append(y['Investing Cash flow'])
+                data_list.append(y['Issuance (repayment) of debt'])
+                data_list.append(y['Issuance (buybacks) of shares'])
+                data_list.append(y['Dividend payments'])
+                data_list.append(y['Financing Cash Flow'])
+                data_list.append(y['Net cash flow / Change in cash'])
+                data_list.append(y['Free Cash Flow'])
+                data_list.append(y['Net Cash/Marketcap'])
+                # pass to commit to DB
+                db_handler.insert_cash_flow_data(conn, data_list)
+            print("Cash flow data committed successfully.")
+            db_handler.close_connection(conn)
+        except Exception as e:
+            print("That didn't work. Did you enter a correct company symbol?")
+            print("Exception: " + str(e))
     else:
         print("Could not retrieve data from API.")
 

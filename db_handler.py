@@ -42,7 +42,8 @@ create_companies_table = """CREATE TABLE IF NOT EXISTS companies (
     # EBIT integer,
     # consolidated_income integer,
     # EBT_margin integer,
-    # net_profit_margin intger,
+    # net_profit_margin intger
+
 create_income_statements_table = """ CREATE TABLE IF NOT EXISTS income_statements (
     id integer PRIMARY KEY, 
     symbol text,
@@ -202,6 +203,67 @@ insert_balance_sheet_data_sql = """ INSERT OR IGNORE INTO balance_sheets (
 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 """
 
+### API has potential show show all these for cash flow statements:
+# date: "2018-09-29",
+# Depreciation & Amortization: "10903000000.0",
+# Stock-based compensation: "5340000000.0",
+# Operating Cash Flow: "77434000000.0",
+# Capital Expenditure: "-13313000000.0",
+# Acquisitions and disposals: "-721000000.0",
+# Investment purchases and sales: "30845000000.0",
+# Investing Cash flow: "16066000000.0",
+# Issuance (repayment) of debt: "432000000.0",
+# Issuance (buybacks) of shares: "-72069000000.0",
+# Dividend payments: "-13712000000.0",
+# Financing Cash Flow: "-87876000000.0",
+# Effect of forex changes on cash: "0.0",
+# Net cash flow / Change in cash: "5624000000.0",
+# Free Cash Flow: "64121000000.0",
+# Net Cash/Marketcap: "-0.0439"
+
+create_cash_flow_table_sql = """ CREATE TABLE IF NOT EXISTS cash_flows (
+    id integer PRIMARY KEY,
+    symbol text, 
+    date date, 
+    Depreciation_Amortization integer,
+    Stock_based_compensation integer,
+    Operating_Cash_Flow integer,
+    Capital_Expenditure integer,
+    Acquisitions_and_disposals integer,
+    Investment_purchases_and_sales integer,
+    Investing_Cash_flow integer,
+    Issuance_or_repayment_of_debt integer,
+    Issuance_or_buybacks_of_shares integer,
+    Dividend_payments integer,
+    Financing_Cash_Flow integer,
+    Net_cash_flow integer,
+    Free_Cash_Flow integer,
+    NetCash_Marketcap integer,
+    FOREIGN KEY (symbol) REFERENCES companies (symbol),
+    UNIQUE(symbol, date)
+);
+"""
+
+insert_cash_flow_data_sql = """ INSERT OR IGNORE INTO cash_flows (
+    symbol,
+    date, 
+    Depreciation_Amortization,
+    Stock_based_compensation,
+    Operating_Cash_Flow,
+    Capital_Expenditure,
+    Acquisitions_and_disposals,
+    Investment_purchases_and_sales,
+    Investing_Cash_flow,
+    Issuance_or_repayment_of_debt,
+    Issuance_or_buybacks_of_shares,
+    Dividend_payments,
+    Financing_Cash_Flow,
+    Net_cash_flow,
+    Free_Cash_Flow,
+    NetCash_Marketcap
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+"""
+
 ### DB methods
 
 def create_connection(db_file):
@@ -242,6 +304,12 @@ def insert_income_statement_data(conn, income_statement):
 def insert_balance_sheet_data(conn, balance_sheet):
     cur = conn.cursor()
     cur.execute(insert_balance_sheet_data_sql, balance_sheet)
+    conn.commit()
+    return cur.lastrowid
+
+def insert_cash_flow_data(conn, cash_flows):
+    cur = conn.cursor()
+    cur.execute(insert_cash_flow_data_sql, cash_flows)
     conn.commit()
     return cur.lastrowid
 

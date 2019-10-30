@@ -17,5 +17,6 @@ if __name__ == "__main__":
     # since statements are only release quarterly
     if args.scrape == True:
         data_provider.get_income_statements(c_symbol)
+        data_provider.get_balance_sheets(c_symbol)
 
-    data_provider.get_balance_sheets(c_symbol)
+    data_provider.get_cash_flow_statements(c_symbol)
