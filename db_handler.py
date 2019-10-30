@@ -289,6 +289,14 @@ def create_table(conn, create_table_sql):
     except Error as e:
         print(e)
 
+def get_data_from_table(conn, table, company_symbol, data):
+    ### pass data as list
+    data = ', '.join(data)
+    sql = f'SELECT {data} FROM {table} WHERE symbol={company_symbol}'
+    cur = conn.cursor()
+    values = cur.execute(sql)
+    return values
+
 def insert_company_data(conn, symbol, name, invest):
     sql = "INSERT OR IGNORE INTO companies VALUES (?,?,?)"
     cur = conn.cursor()
