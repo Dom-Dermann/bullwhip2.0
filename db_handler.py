@@ -291,11 +291,36 @@ def create_table(conn, create_table_sql):
 
 def get_data_from_table(conn, table, company_symbol, data):
     ### pass data as list
-    data = ', '.join(data)
-    sql = f'SELECT {data} FROM {table} WHERE symbol={company_symbol}'
+    sql = ''
+
+    if data == None:
+        data = ', '.join(data)
+        sql = f'SELECT {data} FROM {table} WHERE symbol={company_symbol}'
+    else:
+        sql = f'SELECT * FROM {table} WHERE symbol={company_symbol}'
     cur = conn.cursor()
     values = cur.execute(sql)
     return values
+
+def get_key_information(conn, company_symbol):
+    # initiate results dictionary
+    result = {}
+    result['dates'] = []
+    result['fcf_margins'] = []
+
+    ### get free cash flow data from database
+    fcf_data = []
+    sql = f'SELECT free_cash_flow_margin, date FROM income_statements WHERE symbol="{company_symbol}"'
+    cur = conn.cursor()
+    values = cur.execute(sql)
+    values = values.fetchall()
+
+    for v in values:
+        result['dates'].append(v[1])
+        result['fcf_margins'].append(v[0])
+
+    ### return dictionary
+    return result
 
 def insert_company_data(conn, symbol, name, invest):
     sql = "INSERT OR IGNORE INTO companies VALUES (?,?,?)"

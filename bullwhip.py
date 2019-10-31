@@ -19,3 +19,7 @@ if __name__ == "__main__":
         data_provider.get_income_statements(c_symbol)
         data_provider.get_balance_sheets(c_symbol)
         data_provider.get_cash_flow_statements(c_symbol)
+
+    conn = db_handler.create_connection('./stock_db.db')
+    values = db_handler.get_key_information(conn, 'AAPL')
+    print(values)
