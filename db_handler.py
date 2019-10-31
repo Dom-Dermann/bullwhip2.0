@@ -305,8 +305,6 @@ def get_data_from_table(conn, table, company_symbol, data):
 def get_key_information(conn, company_symbol):
     # initiate results dictionary
     result = {}
-    result['dates'] = []
-    result['fcf_margins'] = []
 
     ### get free cash flow data from database
     fcf_data = []
@@ -316,8 +314,7 @@ def get_key_information(conn, company_symbol):
     values = values.fetchall()
 
     for v in values:
-        result['dates'].append(v[1])
-        result['fcf_margins'].append(v[0])
+        result[v[1]] = v[0] 
 
     ### return dictionary
     return result

@@ -1,11 +1,14 @@
 <h1>Company data for {{name}}</h1>
 
 <table id="key_information_table">
-    {% for key, list in data.items() %}
-        <th> {{ key }} </th>
-        {% for item in list %}
-        
-        <td> {{ values }} </td>
+    <tr>
+        <th>Date</th>
+        <th>Free cash flow margin</th>
+    </tr>
+    {% for date, data in data.items() %}
+        <tr>
+            <td>{{ date }}</td> 
+            <td>{{ data }}</td>
+        </tr>
     {% endfor %}
-
 </table>
